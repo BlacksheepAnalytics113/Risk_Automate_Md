@@ -27,13 +27,13 @@ The **Extract** layer owns warehouse SQL and writes monthly source files. The to
 Run the full monthly warehouse extraction:
 
 ```powershell
-python -m extract.run_extract --month 2026-09
+python -m extract.run_extract --month 2026-09 --country ZA
 ```
 
 Use `--no-upload` to write local Extract files only:
 
 ```powershell
-python -m extract.run_extract --month 2026-09 --no-upload
+python -m extract.run_extract --month 2026-09 --country ZA --no-upload
 ```
 
 The standard Extract runs:
@@ -103,12 +103,40 @@ Tech Blocklist has no separate warehouse SQL. It consumes three files created by
 
 The analysis builds suspension and deduction tabs from these sources. The suspension threshold is more than 20 pre-merge profiles; the deduction rule uses a merge count of at least 5.
 
+## Product Misuse
+
+Product Misuse reads the selected month’s `Raw_Data__DataBase_Data.csv` file. That file is produced by `extract/sql/database_data.sql` as part of the standard Extract. The analysis applies the configured product watchlist and minimum-event threshold per Rafiki within the selected month. The default threshold is three matching events (`MIN_OCCURRENCES` can override it). If no Rafiki reaches the threshold, the flagged-event tabs contain headers but no data; run metadata still records how many source rows and watchlist events were processed. **THIS SCRIPT WAS PRODUCED BY Kayode**
+
 ```powershell
-python -m src.tech_blocklist.TechBlocklist --month 2026-09
+python -m extract.run_extract --month 2026-09 --country ZA
+```
+
+```powershell
+python -m src.tech_blocklist.TechBlocklist --month 2026-09 --country ZA
 ```
 
 This writes the workbook locally under `data/<COUNTRY>/<YYYY-MM>/tech_blocklist/`. Add `--upload` to publish it to the configured Tech Blocklist Drive path:
 
 ```powershell
-python -m src.tech_blocklist.TechBlocklist --month 2026-09 --upload
+python -m extract.run_extract --month 2026-09 --country ZA --no-upload
 ```
+
+The command writes a workbook to `data/<COUNTRY>/<YYYY-MM>/product_misuse/` and publishes the results in the configured output format under `src/Product Misuse/<COUNTRY>/<YYYY-MM>` (the default output format is a Google Sheet). Use `--no-upload` for a local-only run. To analyze a particular DataBase Data CSV instead of the selected month’s default file:
+
+```powershell
+python -m src.product_misuse.product_misuse --month 2026-09 --input "C:\path\DataBase_Data.csv" --no-upload
+```
+If the monthly input is missing, create it first:
+
+```powershell
+python -m extract.run_extract --month 2026-09
+```
+
+## Month selection and configuration
+
+Use `--month YYYY-MM` to select the reporting month. The shared `Period` settings control country, file names, local data folders, and Drive paths. When the command supports the shared default and `--month` is omitted, it uses `ANALYSIS_MONTH` from the environment or the previous calendar month.
+
+Drive publishing also depends on the repository’s local environment configuration and Google authentication. Keep credentials in local secrets or environment variables; do not add them to this documentation or commit them. Relevant settings include the Drive root/path, output format, country, and Google authentication mode. See `.env.example` for setting names and safe placeholders.
+
+## Voice
+Voice is not part of this workflow yet. Its warehouse raw table/query has not been built, so this overview does not document or run a Voice Extract or analysis step. 
