@@ -46,3 +46,24 @@ The standard Extract runs:
 | derived from `database_data.sql` | `Raw_Data__Match_Count.csv`, `Raw_Data__raw_Auto_blocklist.csv` | Tech Blocklist |
 
 Files are saved beneath `data/<COUNTRY>/<YYYY-MM>/extract/` and the Extract workbook is published under the configured Drive Extract path. The standard SQL uses the selected month and the configured country/timezone. For example,with the default South Africa label, September files begin `SA_SEPT_2026_Raw_Data__`.
+
+The Extract runs Self Reporting by default when its SQL files are present. It can also be run independently without rerunning the other Extract queries:
+```powershell
+python -m extract.run_extract --month 2026-09 --self-reporting-only
+python -m extract.run_extract --month 2026-09 --self-reporting-only --no-upload
+```
+
+
+## Self Reporting
+
+Self Reporting has its own SQL queries under `extract/sql/`:
+
+| SQL file | Purpose |
+|---|---|
+| `self_reporting_raw.sql` | Raw self-report fields, including `Day of Report Occured At` and `report_date` |
+| `self_reporting_mvc.sql` | Raw MVC/Rafiki service validations |
+| `self_reporting_mvc_aggregated.sql` | Facility/service comparison of report values and MVC Uptakes |
+| `self_reporting_facilities.sql` | Facility list used for missing-facility analysis |
+
+
+The occurrence timestamp is used for the selected reporting-month window; `report_date` is retained for review, not as the period filter. The comparison combines age-banded report fields with their base service type and removes identical source rows. Offboarded ProNursing Katlehong is excluded. The  Unverified rule is `1` when `report_field_value > MVC Uptakes`, otherwise `0`; Financial Impact is `Unverified × Cost`.
