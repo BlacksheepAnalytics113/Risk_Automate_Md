@@ -22,3 +22,17 @@ data/<COUNTRY>/<YYYY-MM>/extract/
         └── Product Misuse ─── DataBase Data ─────────────────► workbook / Drive
 ```
 The **Extract** layer owns warehouse SQL and writes monthly source files. The tool scripts read those files, apply tool-specific analysis rules, and produce workbooks and (where configured) Drive outputs. Run the Extract for a month before running an analysis that depends on its files.
+
+## What the Extract produces
+Run the full monthly warehouse extraction:
+
+```powershell
+python -m extract.run_extract --month 2026-09
+```
+
+Use `--no-upload` to write local Extract files only:
+
+```powershell
+python -m extract.run_extract --month 2026-09 --no-upload
+```
+
