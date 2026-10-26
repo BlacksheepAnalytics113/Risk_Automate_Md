@@ -36,3 +36,13 @@ Use `--no-upload` to write local Extract files only:
 python -m extract.run_extract --month 2026-09 --no-upload
 ```
 
+The standard Extract runs:
+
+| SQL file | Extract output | Used by |
+|---|---|---|
+| `extract/sql/rafiki_journey.sql` | `Raw_Data__Rafiki_Journey_Raw_Data.csv` | GPS |
+| `extract/sql/database_data.sql` | `Raw_Data__DataBase_Data.csv` | Product Misuse |
+| `extract/sql/tiko_incentives.sql` | `Raw_Data__Tiko_Miles.csv` | GPS and Tech Blocklist |
+| derived from `database_data.sql` | `Raw_Data__Match_Count.csv`, `Raw_Data__raw_Auto_blocklist.csv` | Tech Blocklist |
+
+
