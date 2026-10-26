@@ -73,3 +73,42 @@ After extracting Self Reporting, build its analysis workbook:
 ```powershell
 python -m src.self_reporting.run_self_reporting --month 2026-09
 ```
+Add `--no-upload` to keep the workbook local. Outputs are saved under `data/<COUNTRY>/<YYYY-MM>/self_reporting/` and published under the configured Self Reporting Drive path.
+
+
+
+## GPS
+
+GPS does **not** have a separate GPS warehouse query. It uses the monthly `Rafiki_Journey_Raw_Data.csv` and `Tiko_Miles.csv` produced by the standard Extract. The analysis compares facility and offer coordinates using the
+Haversine distance. Its default deduction rule is distance **greater than 500 m** with geolocation accuracy **at most 100 m**.
+
+```powershell
+python -m src.gps.run_gps_summary --month 2026-09
+```
+The command reads both source files from that month’s local Extract folder and writes a workbook under `data/<COUNTRY>/<YYYY-MM>/gps/`. To use custom CSVs, provide the raw file positionally and optionally a Tiko Miles file:
+
+```powershell
+python -m src.gps.run_gps_summary "C:\path\journey.csv" --tiko-miles "C:\path\tiko_miles.csv" --month 2026-09
+```
+
+If a Google Sheet should receive the results, provide its ID with `--sheet-id`. The default run writes a local workbook; it does not create a Drive output folder or upload automatically.
+
+## Tech Blocklist
+
+Tech Blocklist has no separate warehouse SQL. It consumes three files created by the standard Extract:
+
+* `Raw_Data__raw_Auto_blocklist.csv` as `Raw`
+* `Raw_Data__Match_Count.csv` as `Pivot Table 5`
+* `Raw_Data__Tiko_Miles.csv` as `Tiko_Miles`
+
+The analysis builds suspension and deduction tabs from these sources. The suspension threshold is more than 20 pre-merge profiles; the deduction rule uses a merge count of at least 5.
+
+```powershell
+python -m src.tech_blocklist.TechBlocklist --month 2026-09
+```
+
+This writes the workbook locally under `data/<COUNTRY>/<YYYY-MM>/tech_blocklist/`. Add `--upload` to publish it to the configured Tech Blocklist Drive path:
+
+```powershell
+python -m src.tech_blocklist.TechBlocklist --month 2026-09 --upload
+```
