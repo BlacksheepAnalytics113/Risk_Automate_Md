@@ -45,4 +45,4 @@ The standard Extract runs:
 | `extract/sql/tiko_incentives.sql` | `Raw_Data__Tiko_Miles.csv` | GPS and Tech Blocklist |
 | derived from `database_data.sql` | `Raw_Data__Match_Count.csv`, `Raw_Data__raw_Auto_blocklist.csv` | Tech Blocklist |
 
-
+Files are saved beneath `data/<COUNTRY>/<YYYY-MM>/extract/` and the Extract workbook is published under the configured Drive Extract path. The standard SQL uses the selected month and the configured country/timezone. For example,with the default South Africa label, September files begin `SA_SEPT_2026_Raw_Data__`.
