@@ -162,6 +162,8 @@ python -m src.tech_blocklist.TechBlocklist --month $month --country $country
 python -m src.product_misuse.product_misuse --month $month --country $country
 ```
 
+Each user can run a different country in their own PowerShell session at the same time, using the same shared code and warehouse credentials. Extract files and Drive paths are separated by country label and month as long as custom `DRIVE_*_PATH` settings retain the `{COUNTRY}` and `{YYYY}-{MM}` placeholders. For market-specific configuration beyond the country code, use a market-specific environment file. This keeps additional settings isolated when several users run the tools simultaneously.
+
 
 ## Month selection and configuration
 
@@ -171,3 +173,6 @@ Drive publishing also depends on the repository’s local environment configurat
 
 ## Voice
 Voice is not part of this workflow yet. Its warehouse raw table/query has not been built, so this overview does not document or run a Voice Extract or analysis step. 
+
+
+
