@@ -2,6 +2,7 @@
 ## Overview
 This document describes the implemented Extract → analysis flow for Self-Reporting, GPS, Tech Blocklist, and Product Misuse. **Voice is intentionally
 excluded** until the table can be built from the **1-Many Dashboard** warehouse raw table/query is built. The idea is to automate the risk flow of how analysis is been done within the risk
+NOTE: Most of the script which was written was derived from an existing template to follow. 
 
 ## Architecture at a glance
 <img width="701" height="929" alt="image (2)" src="https://github.com/user-attachments/assets/def0674e-7cd2-485c-82c8-f46910466796" />
@@ -22,6 +23,26 @@ data/<COUNTRY>/<YYYY-MM>/extract/
         └── Product Misuse ─── DataBase Data ─────────────────► workbook / Drive
 ```
 The **Extract** layer owns warehouse SQL and writes monthly source files. The tool scripts read those files, apply tool-specific analysis rules, and produce workbooks and (where configured) Drive outputs. Run the Extract for a month before running an analysis that depends on its files.
+
+
+## Getting started
+
+Use Python 3.12 (the version used by GitHub Actions) and run these commands
+from the repository root in PowerShell. The dependencies are declared in
+`requirements.txt`; install from that file instead of installing packages
+individually:
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Before running a market locally, ensure the repository's `.env` or an `ENV_FILE` contains that market's warehouse and Google Drive/authentication settings.
+$env:PYTHONUTF8 = "1"
+$month = "2026-09"
+$country = "ZA"
 
 ## What the Extract produces
 Run the full monthly warehouse extraction:
