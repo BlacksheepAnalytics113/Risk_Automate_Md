@@ -190,7 +190,7 @@ Each user can run a different country in their own PowerShell session at the sam
 
 Use `--month YYYY-MM` to select the reporting month. The shared `Period` settings control country, file names, local data folders, and Drive paths. When the command supports the shared default and `--month` is omitted, it uses `ANALYSIS_MONTH` from the environment or the previous calendar month.
 
-Drive publishing also depends on the repository’s local environment configuration and Google authentication. Keep credentials in local secrets or environment variables; do not add them to this documentation or commit them. Relevant settings include the Drive root/path, output format, country, and Google authentication mode. See `.env.example` for setting names and safe placeholders.
+Drive publishing also depends on the repository’s local environment configuration and Google authentication. Keep credentials in local secrets or environment variables; do not add them to this documentation or commit them. Relevant settings include the Drive root/path, output format, country, and Google authentication mode. See `.env` for setting names and safe placeholders.
 
 ## Voice
 Voice is not part of this workflow yet. Its warehouse raw table/query has not been built, so this overview does not document or run a Voice Extract or analysis step. 
