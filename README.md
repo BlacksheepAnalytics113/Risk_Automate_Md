@@ -196,4 +196,29 @@ Drive publishing also depends on the repository’s local environment configurat
 Voice is not part of this workflow yet. Its warehouse raw table/query has not been built, so this overview does not document or run a Voice Extract or analysis step. 
 
 
+## Running markets in parallel with GitHub Actions
+
+To start the market workflow:
+
+1. In `.github/markets.yml`, set `enabled: true` only for markets ready to run. Confirm each market's warehouse country code, unique output label, access, and Drive configuration first.
+2. In GitHub, open **Settings → Secrets and variables → Actions** and configure the `TIKO_DW_DSN` and `GOOGLE_SA_JSON` repository secrets and the `DRIVE_ROOT_FOLDER_ID` repository variable.
+3. Commit and push the workflow and market configuration to the repository's default branch. A push runs tests only; it does not start market processing.
+4. Open **Actions → Monthly risk run → Run workflow**, select the branch, enter a month as `YYYY-MM` or leave it blank to use the previous calendar month, then select **Run workflow**.
+5. Open the resulting run to follow the test, configuration, and per-market jobs. A failing market job does not cancel the other market jobs.
+
+The `monthly-risk.yml` workflow runs tests on pushes to `main`. The manual dispatch reads the enabled markets from `.github/markets.yml` and starts one isolated matrix job for each enabled market. Each job runs Extract, Self Reporting, GPS, Tech Blocklist, and Product Misuse in sequence; different markets run simultaneously. Voice is excluded. There is no scheduled market run currently. ZA is enabled by default and KE is disabled in this example:
+
+```yaml
+markets:
+  - country: za
+    label: SA
+    enabled: true
+  - country: ke
+    label: KE
+    enabled: false
+```
+
+Only ZA is enabled by default. KE is listed as disabled until its access and data flow have been validated. The matrix loader rejects invalid and duplicate market identifiers, and fails if no market is enabled.
+
+
 
