@@ -67,3 +67,9 @@ Self Reporting has its own SQL queries under `extract/sql/`:
 
 
 The occurrence timestamp is used for the selected reporting-month window; `report_date` is retained for review, not as the period filter. The comparison combines age-banded report fields with their base service type and removes identical source rows. Offboarded ProNursing Katlehong is excluded. The  Unverified rule is `1` when `report_field_value > MVC Uptakes`, otherwise `0`; Financial Impact is `Unverified × Cost`.
+
+After extracting Self Reporting, build its analysis workbook:
+
+```powershell
+python -m src.self_reporting.run_self_reporting --month 2026-09
+```
