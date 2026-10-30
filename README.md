@@ -187,6 +187,12 @@ python -m src.voice.run_voice_extract --month 2026-09 --country ZA --no-upload
 
 ## Voice Analysis
 The Voice Analysis reads the Voice_Raw extract and produces a workbook with the following tabs:
+| SQL file | Extract output | Used by |
+|---|---|---|
+| `extract/sql/rafiki_journey.sql` | `Raw_Data__Rafiki_Journey_Raw_Data.csv` | GPS |
+| `extract/sql/database_data.sql` | `Raw_Data__DataBase_Data.csv` | Product Misuse |
+| `extract/sql/tiko_incentives.sql` | `Raw_Data__Tiko_Miles.csv` | GPS and Tech Blocklist |
+| derived from `database_data.sql` | `Raw_Data__Match_Count.csv`, `Raw_Data__raw_Auto_blocklist.csv` | Tech Blocklist |
 
 ### Running different markets independently
 
