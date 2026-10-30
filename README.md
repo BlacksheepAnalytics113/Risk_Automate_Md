@@ -1,8 +1,6 @@
 # Risk_Automate_Md
 ## Overview
-This document describes the implemented Extract → analysis flow for Self-Reporting, GPS, Tech Blocklist, and Product Misuse. **Voice is intentionally
-excluded** until the table can be built from the **1-Many Dashboard** warehouse raw table/query is built. The idea is to automate the risk flow of how analysis is been done within the risk
-NOTE: Most of the script which was written was derived from an existing template to follow. 
+This document describes the implemented Extract → analysis flow for Self-Reporting, GPS, Tech Blocklist, Product Misuse, and Voice. The idea is to automate the risk flow of how analysis is done within the risk team. NOTE: Most of the script which was written was derived from an existing template to follow.
 
 ## Architecture at a glance
 <img width="701" height="929" alt="image (2)" src="https://github.com/user-attachments/assets/def0674e-7cd2-485c-82c8-f46910466796" />
@@ -20,7 +18,9 @@ data/<COUNTRY>/<YYYY-MM>/extract/
         ├── GPS ────────────── Rafiki Journey + Tiko Miles ───► GPS workbook
         ├── Tech Blocklist ─── auto-blocklist + Match_Count
         │                     + Tiko Miles ───────────────────► workbook / Drive
-        └── Product Misuse ─── DataBase Data ─────────────────► workbook / Drive
+        ├── Product Misuse ─── DataBase Data ─────────────────► workbook / Drive
+        └── Voice ─────────── nuance 1-Many voice biometric
+                              matches (dedicated extract) ───► workbook / Drive
 ```
 The **Extract** layer owns warehouse SQL and writes monthly source files. The tool scripts read those files, apply tool-specific analysis rules, and produce workbooks and (where configured) Drive outputs. Run the Extract for a month before running an analysis that depends on its files.
 
@@ -165,6 +165,29 @@ If the monthly input is missing, create it first:
 python -m extract.run_extract --month 2026-09
 ```
 
+## Voice 
+Voice uses Nuance 1-to-Many voice biometric data to identify rafikis whose voice matches multiple different people, which may indicate fraudulent activity. Unlike the other tools, Voice has its own dedicated Extract that queries the nuance_one_to_many_vw warehouse view directly, because the data is not part of the standard Extract.
+
+## Voice Extract
+
+The Voice Extract runs a multi-phase SQL pipeline against the warehouse:
+Phase 1 — Deduplicate the Nuance view (which contains 7-8x built-in duplicates per row)
+Phase 1b — Filter to the configured country
+Phase 2 — Expand to get all matches for enrolled UUIDs in the period
+Phase 3a/3b — Enrich with Rafiki and Tiko Contact metadata from the warehouse
+Phase 4 — Final column selection
+
+```powershell
+python -m src.voice.run_voice_extract --month 2026-09 --country ZA
+```
+ Use --no-upload to write the extract locally only:
+ ```powershell
+python -m src.voice.run_voice_extract --month 2026-09 --country ZA --no-upload
+```
+
+## Voice Analysis
+The Voice Analysis reads the Voice_Raw extract and produces a workbook with the following tabs:
+
 ### Running different markets independently
 
 Pass the market country code directly with `--country` to every completed
@@ -191,9 +214,6 @@ Each user can run a different country in their own PowerShell session at the sam
 Use `--month YYYY-MM` to select the reporting month. The shared `Period` settings control country, file names, local data folders, and Drive paths. When the command supports the shared default and `--month` is omitted, it uses `ANALYSIS_MONTH` from the environment or the previous calendar month.
 
 Drive publishing also depends on the repository’s local environment configuration and Google authentication. Keep credentials in local secrets or environment variables; do not add them to this documentation or commit them. Relevant settings include the Drive root/path, output format, country, and Google authentication mode. See `.env` for setting names and safe placeholders.
-
-## Voice
-Voice is not part of this workflow yet. Its warehouse raw table/query has not been built, so this overview does not document or run a Voice Extract or analysis step. 
 
 
 ## Running markets in parallel with GitHub Actions
