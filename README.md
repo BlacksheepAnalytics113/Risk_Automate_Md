@@ -187,12 +187,12 @@ python -m src.voice.run_voice_extract --month 2026-09 --country ZA --no-upload
 
 ## Voice Analysis
 The Voice Analysis reads the Voice_Raw extract and produces a workbook with the following tabs:
-| SQL file | Extract output | Used by |
-|---|---|---|
-| `extract/sql/rafiki_journey.sql` | `Raw_Data__Rafiki_Journey_Raw_Data.csv` | GPS |
-| `extract/sql/database_data.sql` | `Raw_Data__DataBase_Data.csv` | Product Misuse |
-| `extract/sql/tiko_incentives.sql` | `Raw_Data__Tiko_Miles.csv` | GPS and Tech Blocklist |
-| derived from `database_data.sql` | `Raw_Data__Match_Count.csv`, `Raw_Data__raw_Auto_blocklist.csv` | Tech Blocklist |
+| Tab | Purpose |
+|---|---|
+| `Raw` | Voice_Raw rows where both Event At and Match Voice Recorded At fall in the analysis month, with Match Count (COUNTUNIQUE of Match UUID) per Rafiki UUID |
+| `Voice_Analysis` | All input rows (no month filter) with Same Facility, Same Person, and Same Both boolean columns |
+| `Match_Count` | COUNTUNIQUE of Match UUID per Rafiki UUID, sorted descending. Rafikis with >= 5 matches get a service check: Has Services, Total Services, Blocklisted Count, Non Blocklisted |
+| `BlockListFile` | Detail rows for rafikis meeting the match threshold (>= 5), with renamed columns for the suspension list |
 
 ### Running different markets independently
 
