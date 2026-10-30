@@ -172,10 +172,10 @@ Voice uses Nuance 1-to-Many voice biometric data to identify rafikis whose voice
 
 The Voice Extract runs a multi-phase SQL pipeline against the warehouse:
 <li>Phase 1 — Deduplicate the Nuance view (which contains 7-8x built-in duplicates per row)</li>
-Phase 1b — Filter to the configured country
-Phase 2 — Expand to get all matches for enrolled UUIDs in the period
-Phase 3a/3b — Enrich with Rafiki and Tiko Contact metadata from the warehouse
-Phase 4 — Final column selection
+<li>Phase 1b — Filter to the configured country</li>
+<li>Phase 2 — Expand to get all matches for enrolled UUIDs in the period</li>
+<li>Phase 3a/3b — Enrich with Rafiki and Tiko Contact metadata from the warehouse</li>
+<li>Phase 4 — Final column selection</li>
 
 ```powershell
 python -m src.voice.run_voice_extract --month 2026-09 --country ZA
